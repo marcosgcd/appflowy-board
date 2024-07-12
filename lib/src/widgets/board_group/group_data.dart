@@ -159,6 +159,13 @@ class AppFlowyGroupController extends ChangeNotifier with EquatableMixin {
     _notify();
   }
 
+  void replaceAll(List<AppFlowyGroupItem> items) {
+    groupData._items.clear();
+    groupData._items.addAll(items);
+
+    _notify();
+  }
+
   void replaceOrInsertItem(AppFlowyGroupItem newItem) {
     final index = groupData._items.indexWhere((item) => item.id == newItem.id);
     if (index != -1) {

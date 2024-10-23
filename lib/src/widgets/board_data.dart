@@ -130,6 +130,21 @@ class AppFlowyBoardController extends ChangeNotifier
     if (groups.isNotEmpty && notify) notifyListeners();
   }
 
+  /// Adds a list of groups to the end of the current group list.
+  ///
+  /// If you don't want to notify the listener after adding the groups, the
+  /// [notify] should set to false. Default value is true.
+  void setGroups(List<AppFlowyGroupData> groups, {bool notify = true}) {
+    for (final group in groups) {
+      final groupIndx = _groupDatas.indexWhere((g) => g.id == group.id);
+      _groupDatas[groupIndx] = group;
+      _groupControllers[group.id] = _groupControllers[group.id] ??
+          AppFlowyGroupController(groupData: group);
+    }
+
+    if (groups.isNotEmpty && notify) notifyListeners();
+  }
+
   /// Removes the group with id [groupId]
   ///
   /// If you don't want to notify the listener after removing the group, the

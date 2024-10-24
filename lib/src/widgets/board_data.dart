@@ -144,7 +144,7 @@ class AppFlowyBoardController extends ChangeNotifier
       _groupControllers[group.id] = _groupControllers[group.id] ??
           AppFlowyGroupController(groupData: group);
 
-      _groupControllers[group.id]!.replaceAll(group.items);
+      _groupControllers[group.id]!.replaceOrInsertAll(group.items);
     }
 
     if (groups.isNotEmpty && notify) notifyListeners();

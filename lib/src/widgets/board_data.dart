@@ -134,30 +134,45 @@ class AppFlowyBoardController extends ChangeNotifier
   ///
   /// If you don't want to notify the listener after adding the groups, the
   /// [notify] should set to false. Default value is true.
-  void setGroups(List<AppFlowyGroupData> groups) {
-    // Create a set of new group IDs from the provided groups list
-    final newGroupIds = groups.map((group) => group.id).toSet();
+  void setGroups(List<AppFlowyGroupData> groups, {bool notify = true}) {
+    // Create a map from group IDs to group data for quick access
+    final groupMap = {for (final group in groups) group.id: group};
 
-    // Remove groups from _groupDatas that are not in newGroupIds
-    _groupDatas.removeWhere((group) => !newGroupIds.contains(group.id));
+    // Remove groups from _groupDatas that are not in the new groups
+    _groupDatas.removeWhere((group) => !groupMap.containsKey(group.id));
 
-    // Remove group controllers from _groupControllers that are not in newGroupIds
-    _groupControllers
-        .removeWhere((groupId, _) => !newGroupIds.contains(groupId));
-
-    // Add or update the remaining groups
+    // Update existing groups and add new ones
     for (final group in groups) {
-      final groupIndx = _groupDatas.indexWhere((g) => g.id == group.id);
+      final groupIndex = _groupDatas.indexWhere((g) => g.id == group.id);
 
-      if (groupIndx == -1) {
+      if (groupIndex == -1) {
+        // If the group doesn't exist, add it
         _groupDatas.add(group);
+      } else {
+        // If the group exists, update it
+        _groupDatas[groupIndex] = group;
       }
 
+      // Update or create group controllers
       _groupControllers[group.id] = _groupControllers[group.id] ??
           AppFlowyGroupController(groupData: group);
 
       _groupControllers[group.id]!.replaceOrInsertAll(group.items);
     }
+
+    // Sort _groupDatas to match the order of groups
+    _groupDatas.sort((a, b) {
+      final indexA = groups.indexWhere((g) => g.id == a.id);
+      final indexB = groups.indexWhere((g) => g.id == b.id);
+      return indexA.compareTo(indexB);
+    });
+
+    // Remove controllers that are no longer needed
+    final newGroupIds = groupMap.keys.toSet();
+    _groupControllers
+        .removeWhere((groupId, _) => !newGroupIds.contains(groupId));
+
+    if (groups.isNotEmpty && notify) notifyListeners();
   }
 
   /// Removes the group with id [groupId]

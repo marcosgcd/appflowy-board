@@ -157,12 +157,20 @@ class AppFlowyBoardController extends ChangeNotifier
       _groupControllers[group.id]!.replaceOrInsertAll(group.items);
     }
 
-    // Sort _groupDatas to match the order of groups
-    _groupDatas.sort((a, b) {
-      final indexA = groups.indexWhere((g) => g.id == a.id);
-      final indexB = groups.indexWhere((g) => g.id == b.id);
-      return indexA.compareTo(indexB);
-    });
+    final groupDataOrder = _groupDatas.map((group) => group.id).join();
+    final groupsOrder = groups.map((group) => group.id).join();
+
+    if (groupDataOrder != groupsOrder) {
+      Log.debug(
+        'Group order has changed. Old order: $groupDataOrder, New order: $groupsOrder',
+      );
+      // Sort _groupDatas to match the order of groups
+      _groupDatas.sort((a, b) {
+        final indexA = groups.indexWhere((g) => g.id == a.id);
+        final indexB = groups.indexWhere((g) => g.id == b.id);
+        return indexA.compareTo(indexB);
+      });
+    }
 
     // Remove controllers that are no longer needed
     final newGroupIds = groupMap.keys.toSet();

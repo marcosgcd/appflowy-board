@@ -148,9 +148,6 @@ class AppFlowyBoardController extends ChangeNotifier
       if (groupIndex == -1) {
         // If the group doesn't exist, add it
         _groupDatas.add(group);
-      } else {
-        // If the group exists, update it
-        _groupDatas[groupIndex] = group;
       }
 
       // Update or create group controllers

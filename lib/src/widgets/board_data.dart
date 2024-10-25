@@ -157,8 +157,8 @@ class AppFlowyBoardController extends ChangeNotifier
       _groupControllers[group.id]!.replaceOrInsertAll(group.items);
     }
 
-    final groupDataOrder = _groupDatas.map((group) => group.id).join();
-    final groupsOrder = groups.map((group) => group.id).join();
+    final groupDataOrder = _groupDatas.map((group) => group.id).join(",");
+    final groupsOrder = groups.map((group) => group.id).join(",");
 
     if (groupDataOrder != groupsOrder) {
       // Sort _groupDatas to match the order of groups
@@ -167,6 +167,8 @@ class AppFlowyBoardController extends ChangeNotifier
         final indexB = groups.indexWhere((g) => g.id == b.id);
         return indexA.compareTo(indexB);
       });
+
+      notifyListeners();
     }
 
     // Remove controllers that are no longer needed

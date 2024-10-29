@@ -136,12 +136,13 @@ class AppFlowyBoardController extends ChangeNotifier
   /// [notify] should set to false. Default value is true.
   void setGroups(List<AppFlowyGroupData> groups) {
     bool notify = false;
+    notify = notify || _groupDatas.length != groups.length;
+
     // Create a map from group IDs to group data for quick access
     final groupMap = {for (final group in groups) group.id: group};
 
     // Remove groups from _groupDatas that are not in the new groups
     _groupDatas.removeWhere((group) => !groupMap.containsKey(group.id));
-    notify = notify || _groupDatas.length != groups.length;
 
     // Update existing groups and add new ones
     for (final group in groups) {

@@ -175,8 +175,13 @@ class AppFlowyBoardController extends ChangeNotifier
 
     // Remove controllers that are no longer needed
     final newGroupIds = groupMap.keys.toSet();
-    _groupControllers
-        .removeWhere((groupId, _) => !newGroupIds.contains(groupId));
+    _groupControllers.removeWhere((groupId, controller) {
+      if (!newGroupIds.contains(groupId)) {
+        controller.dispose();
+        return true;
+      }
+      return false;
+    });
 
     if (notify) {
       notifyListeners();

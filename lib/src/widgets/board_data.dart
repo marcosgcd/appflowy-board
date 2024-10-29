@@ -172,14 +172,14 @@ class AppFlowyBoardController extends ChangeNotifier
       });
     }
 
-    if (notify) {
-      notifyListeners();
-    }
-
     // Remove controllers that are no longer needed
     final newGroupIds = groupMap.keys.toSet();
     _groupControllers
         .removeWhere((groupId, _) => !newGroupIds.contains(groupId));
+
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   /// Removes the group with id [groupId]

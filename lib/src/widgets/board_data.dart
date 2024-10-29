@@ -135,11 +135,13 @@ class AppFlowyBoardController extends ChangeNotifier
   /// If you don't want to notify the listener after adding the groups, the
   /// [notify] should set to false. Default value is true.
   void setGroups(List<AppFlowyGroupData> groups) {
+    bool notify = false;
     // Create a map from group IDs to group data for quick access
     final groupMap = {for (final group in groups) group.id: group};
 
     // Remove groups from _groupDatas that are not in the new groups
     _groupDatas.removeWhere((group) => !groupMap.containsKey(group.id));
+    notify = notify || _groupDatas.length != groups.length;
 
     // Update existing groups and add new ones
     for (final group in groups) {
@@ -161,13 +163,16 @@ class AppFlowyBoardController extends ChangeNotifier
     final groupsOrder = groups.map((group) => group.id).join(",");
 
     if (groupDataOrder != groupsOrder) {
+      notify = notify || true;
       // Sort _groupDatas to match the order of groups
       _groupDatas.sort((a, b) {
         final indexA = groups.indexWhere((g) => g.id == a.id);
         final indexB = groups.indexWhere((g) => g.id == b.id);
         return indexA.compareTo(indexB);
       });
+    }
 
+    if (notify) {
       notifyListeners();
     }
 

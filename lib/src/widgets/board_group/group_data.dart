@@ -167,16 +167,9 @@ class AppFlowyGroupController extends ChangeNotifier with EquatableMixin {
   }
 
   void replaceOrInsertAll(List<AppFlowyGroupItem> items) {
-    // Create a set of new item IDs from the provided items list
-    final newItemIds = items.map((item) => item.id).toSet();
-
     // Remove items from groupData._items that are not in newItemIds
-    groupData._items.removeWhere((item) => !newItemIds.contains(item.id));
-
-    // Proceed to replace or insert the remaining items
-    for (final item in items) {
-      replaceOrInsertItem(item, notify: false);
-    }
+    groupData._items.clear();
+    groupData._items.addAll(items);
 
     _notify();
   }
